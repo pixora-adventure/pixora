@@ -1,5 +1,5 @@
 
-name: PIXORA ADVENTURE Build
+name: PIXORA ADVENTURE
 
 on:
   workflow_dispatch:
@@ -15,40 +15,25 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - name: Get Project
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Java Setup
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
-      - name: Find Project
-        id: project
-        shell: bash
+      - name: Build APK
         run: |
-          if [ -f "./gradlew" ]; then
-            echo "dir=." >> "$GITHUB_OUTPUT"
-          elif [ -f "./android/gradlew" ]; then
-            echo "dir=android" >> "$GITHUB_OUTPUT"
-          else
-            echo "Gradle project not found."
-            exit 1
-          fi
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --stacktrace
 
-      - name: Prepare Build
-        run: chmod +x "${{ steps.project.outputs.dir }}/gradlew"
-
-      - name: Compile APK
-        working-directory: ${{ steps.project.outputs.dir }}
-        run: ./gradlew assembleDebug --stacktrace
-
-      - name: Save APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: PIXORA-ADVENTURE-APK
-          path: ${{ steps.project.outputs.dir }}/app/build/outputs/apk/debug/*.apk
+          path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 7
           
