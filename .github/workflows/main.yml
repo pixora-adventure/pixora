@@ -1,0 +1,27 @@
+name: Build PIXORA ADVENTURE APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get project files
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK
+        run: |
+          unzip -o MariaPlayins_Tabletten_APK_Derleme.zip -d project
+          cd project
+          find . -name gradlew -type f
