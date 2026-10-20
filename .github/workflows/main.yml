@@ -1,3 +1,4 @@
+
 name: Build PIXORA ADVENTURE APK
 
 on:
@@ -6,9 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      ANDROID_HOME: /usr/local/lib/android/sdk
-      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
 
     steps:
       - name: Get project files
@@ -26,10 +24,15 @@ jobs:
           gradle-version: "8.9"
 
       - name: Install Android SDK
-        run: sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
+        uses: android-actions/setup-android@v3
+
+      - name: Install SDK packages
+        run: |
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
       - name: Extract Android project
-        run: unzip -o MariaPlayins_Android_Projesi.zip -d project
+        run: |
+          unzip -o MariaPlayins_Android_Projesi.zip -d project
 
       - name: Build APK
         working-directory: project
@@ -40,3 +43,5 @@ jobs:
         with:
           name: PIXORA-ADVENTURE-APK
           path: project/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          
